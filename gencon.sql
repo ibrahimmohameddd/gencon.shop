@@ -7,6 +7,9 @@
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
+CREATE DATABASE IF NOT EXISTS `gencon` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8_general_ci;
+USE `gencon`;
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
@@ -38,7 +41,7 @@ CREATE TABLE `account` (
 
 INSERT INTO `account` (`user`, `pass`) VALUES
 ('ibrahim', 123456),
-('ibrahim2', 123);
+('techweb', 123);
 
 -- --------------------------------------------------------
 
@@ -55,24 +58,7 @@ CREATE TABLE `products` (
   `price` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
---
--- Dumping data for table `products`
---
 
-INSERT INTO `products` (`id`, `category`, `pic`, `name`, `description`, `price`) VALUES
-(9, 'outdoor-sofas', 'uploads/1757866659_sofa.jpg', 'white sofa', 'aiufgiwsgowh', 50.00),
-(10, 'sofas', 'uploads/1757934280_1757866789_sofa.jpg', 'white sofa', 'ugif8ii', 50.00),
-(27, 'bedroom-sets', 'uploads/1757876776_dinning-table.jpg', 'dinning table', 'kuyioydioafw', 10.00),
-(28, 'dining-tables', 'uploads/1757934327_1757866659_sofa.jpg', 'dinning table', 'kuyioydioafw hello', 20.00),
-(29, '', 'uploads/1757884676_dinning-table.jpg', 'table', '', 10.00),
-(31, 'sofas', 'uploads/1757877126_dinning-table.jpg', 'dinning table', 'changed333', 10.00),
-(32, '', 'uploads/1757886198_dinning-table.jpg', 'white sofa', 'FOIHOWIHGF', 20.00),
-(33, '', 'uploads/1757886215_dinning-table.jpg', 'white sofa', 'FOIHOWIHGF', 20.00),
-(34, '', 'uploads/1757886705_dinning-table.jpg', 'white sofa', 'FOIHOWIHGF', 20.00),
-(35, '', 'uploads/1757934447_chair.jpg', 'chair', 'this is a chair', 3.00),
-(36, '', 'uploads/1757934456_chair.jpg', 'chair', 'this is a chair', 5.00),
-(37, 'chairs', 'uploads/1757937223_chair.jpg', 'chair', 'diehoegg', 6.00),
-(38, 'coffee-tables', 'uploads/1757939847_chair.jpg', 'arm chair', 'ksnoisgj', 5.00);
 
 --
 -- Indexes for dumped tables
