@@ -1,8 +1,8 @@
 <?php
 // Database connection
-//$conn = new mysqli('localhost', 'root', '', 'gencon');
+$conn = new mysqli('localhost', 'root', '', 'gencon');
 
-$conn = new mysqli('sql304.infinityfree.com','if0_39979054','Barhoma2008','if0_39979054_gencon');
+// $conn = new mysqli('sql304.infinityfree.com','if0_39979054','Barhoma2008','if0_39979054_gencon');
 
 // Check connection
 if ($conn->connect_error) {

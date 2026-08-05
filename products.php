@@ -6,7 +6,7 @@ $db = "gencon";
 
 $conn = new mysqli($host, $user, $pass, $db);
 
-//$conn = new mysqli('sql304.infinityfree.com','if0_39979054','Barhoma2008','if0_39979054_gencon');
+// $conn = new mysqli('sql304.infinityfree.com','if0_39979054','Barhoma2008','if0_39979054_gencon');
 
 $r = mysqli_query($conn, "SELECT * FROM products");
 $r2 = mysqli_query($conn, "SELECT * FROM category");
@@ -1161,7 +1161,7 @@ $price = "SELECT price FROM PRODUCTS;";
             <!-- Products Grid -->
             <div class="product-grid" id="products-grid">
                 <!-- Products will be populated by PHP -->
-                <?php/*
+                <?php
                 while ($row = mysqli_fetch_array($r)) {
                     echo "<div class='product-card' data-category='$row[category]' data-price='$row[price]' data-name='$row[name]' data-description='$row[description]'>
                 <img src='$row[pic]' alt='$row[name]' class='w-full h-full object-cover'>
@@ -1173,42 +1173,8 @@ $price = "SELECT price FROM PRODUCTS;";
                 </div>
             </div>";
                 }
-               */ ?>
-
-                <?php
-                            $rowCount = mysqli_num_rows($r);
-                            if ($rowCount > 0) {
-                                while ($row = $r->fetch_assoc()):
-                                    // make values safe for HTML attributes
-                                    $id    = (int)$row['id'];
-                                    $name  = htmlspecialchars($row['name'] ?? '', ENT_QUOTES);
-                                    $price  = htmlspecialchars($row['price'] ?? '', ENT_QUOTES);
-                                    $category  = htmlspecialchars($row['category'] ?? '', ENT_QUOTES);
-                                    // remove newlines from description so it won't break an attribute
-                                    $desc  = htmlspecialchars(str_replace(["\r", "\n"], [' ', ' '], $row['description'] ?? ''), ENT_QUOTES);
-                                    $pic   = htmlspecialchars($row['pic'] ?? '', ENT_QUOTES);
-                            ?>
-                              <div class='product-card' data-category='<?= $category?>' data-price='<?=$price?>' data-name='<?=$name?>' data-description='$row[description]'>
-                <img src='<?= $pic?>' alt='<?=$name?>' class='w-full h-full object-cover'>
-                <div class='card-content'>
-                    <h3 class='text-lg font-bold mb-2'><?= $name ?></h3>
-                    <p class='text-gray-600 text-sm mb-3'><?=$desc?></p>
-                    <div class='price mb-4'>$<span class='price2'><?=$price?></span></div>
-                    <button class='add-to-cart-btn btn-primary' data-product-id='<?=$id?>' data-product-name='<?=$name?>' data-product-price='<?=$price?>'>Add to Cart <i class='fas fa-shopping-cart ml-2'></i></button>
-                </div>
+                ?>
             </div>
-                            <?php endwhile; 
-                            } else {
-                                // If no categories found, show the message
-                                echo '<tr><td colspan="4" class="text-center py-4">No categories found</td></tr>';
-                            }
-                            ?>
-
-
-            </div>
-
-                
-
 
             <!-- No Results Message -->
             <div class="no-results" id="no-results" style="display: none;">
