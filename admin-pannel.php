@@ -28,13 +28,12 @@
             exit;
         }
 
-        /*$host = "localhost";
+        $host = "localhost";
         $user = "root";
         $pass = ""; // change if different
         $db   = "gencon";
 
-        $conn = new mysqli($host, $user, $pass, $db);*/
-        $conn = new mysqli('sql304.infinityfree.com','if0_39979054','Barhoma2008','if0_39979054_gencon');
+        $conn = new mysqli($host, $user, $pass, $db);
         $r = mysqli_query($conn, "SELECT * FROM products");
         $r2 = mysqli_query($conn, "SELECT * FROM category");
         
