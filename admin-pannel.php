@@ -618,7 +618,50 @@
         #manage-categories-btn{
             background-color: #7c3aed;
         }
-    </style>
+
+        #hamburger-btn{
+            border: 1px solid #eee;
+            border-radius: 5px;
+            font-size:1rem;
+            display:none;
+        }
+
+        #hamburger-list{
+            display:none;
+            flex-direction: column;
+            gap:12px;
+            position:absolute;
+            top:70px;
+            right:20px;
+            background-color:white;
+            border:1px solid #eee;
+            border-radius:5px;
+            padding:10px;
+            box-shadow:0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        #hamburger-list button{
+            width: 100% !important;
+        }
+
+        #hamburger-list.show{
+            display:flex !important;
+        }
+
+        @media (max-width: 768px) {
+            #hamburger-btn{
+                display:block;
+            }
+            #options-container{
+                display:none;
+            }
+        }
+        @media (min-width: 769px) {
+            #hamburger-list{
+                display: none !important;
+            }
+        }
+</style>
     
    
 </head>
@@ -635,14 +678,14 @@
                     <span>Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Admin'; ?></span>
                     <span id="clock">00:00</span>
                 </div>
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-4" id="options-container">
                 
                 <a href="mang-categories.php">
                     <button id="manage-categories-btn" class="btn-info">
                         <i class="fas fa-tags mr-2"></i> Manage categories
                     </button>
                 </a>
-                <button id="manage-accounts-btn" class="btn-info">
+                <button class="manage-accounts-btn btn-info">
                         <i class="fas fa-users-cog mr-2"></i> Manage Accounts
                     </button>
                 
@@ -651,10 +694,34 @@
                             <i class="fas fa-sign-out-alt mr-2"></i> Logout
                         </button>
                     </form>
+                    
                 </div>
+                <button id="hamburger-btn" class="px-4 py-2 rounded-lg transition" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+                
             </div>
         </header>
         
+        <div id="hamburger-list">
+                <div style="display:flex; align-items:center; gap:2rem;">
+                    <span>Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Admin'; ?></span>
+                    <span id="hamburger-clock">00:00</span>
+                </div>
+            <a href="mang-categories.php">
+                    <button id="manage-categories-btn" class="btn-info">
+                        <i class="fas fa-tags mr-2"></i> Manage categories
+                    </button>
+                </a>
+                <button class="manage-accounts-btn btn-info">
+                        <i class="fas fa-users-cog mr-2"></i> Manage Accounts
+                    </button>
+                
+                    <form method="POST">
+                        <button id="logout-btn" name="logout" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">
+                            <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                        </button>
+                    </form>
+        </div>
+
         <!-- Main Content -->
         <main class="container mx-auto px-6 py-8">
             <h1 class="text-3xl font-bold mb-6">Product Management</h1>
@@ -1188,12 +1255,14 @@
             
             // Account Management Modal
             const accountPopup = document.getElementById("accountPopup");
-            const manageAccountsBtn = document.getElementById("manage-accounts-btn");
+            const manageAccountsBtn = document.querySelectorAll(".manage-accounts-btn");
             const accountCloseBtn = accountPopup.querySelector(".close-modal");
             
             // Open account management modal
-            manageAccountsBtn.addEventListener("click", function() {
-                accountPopup.style.display = "flex";
+            manageAccountsBtn.forEach(btn => {
+                btn.addEventListener("click", function() {
+                    accountPopup.style.display = "flex";
+                });
             });
             
             // Close account management modal
@@ -1299,9 +1368,21 @@
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
             document.getElementById("clock").textContent = `${day} ${hours}:${minutes}:${seconds}`;
+            document.getElementById("hamburger-clock").textContent = `${day} ${hours}:${minutes}:${seconds}`;
         }
         updateClock(); // Initial call
         setInterval(updateClock, 1000); // Update every second
+
+        const menu = document.getElementById("hamburger-list");
+        function toggleMenu() {
+             menu.classList.toggle("show");
+        }
+
+        window.addEventListener("resize", function() {
+            if (window.innerWidth > 796) {
+                menu.classList.remove("show");
+            }
+        });
 
     </script>
 </body>
