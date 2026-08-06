@@ -615,6 +615,9 @@
             font-size: 0.875rem;
             border-radius: 3px;
         }
+        #manage-categories-btn{
+            background-color: #7c3aed;
+        }
     </style>
     
    
@@ -628,11 +631,21 @@
                 <div class="admin-logo">
                     <span class="gen-part">GEN</span><span class="con-part">CON</span> Admin
                 </div>
+                <div style="display:flex; align-items:center; gap:2rem;">
+                    <span>Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Admin'; ?></span>
+                    <span id="clock">00:00</span>
+                </div>
                 <div class="flex items-center space-x-4">
-                    <button id="manage-accounts-btn" class="btn-info">
+                
+                <a href="mang-categories.php">
+                    <button id="manage-categories-btn" class="btn-info">
+                        <i class="fas fa-tags mr-2"></i> Manage categories
+                    </button>
+                </a>
+                <button id="manage-accounts-btn" class="btn-info">
                         <i class="fas fa-users-cog mr-2"></i> Manage Accounts
                     </button>
-                    <span>Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Admin'; ?></span>
+                
                     <form method="POST">
                         <button id="logout-btn" name="logout" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">
                             <i class="fas fa-sign-out-alt mr-2"></i> Logout
@@ -1276,6 +1289,20 @@
                 document.querySelector("[data-tab='view-accounts']").classList.add("active");
             });
         });
+
+        function updateClock() {
+            const now = new Date();
+       
+            const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            const day = days[now.getDay()];
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById("clock").textContent = `${day} ${hours}:${minutes}:${seconds}`;
+        }
+        updateClock(); // Initial call
+        setInterval(updateClock, 1000); // Update every second
+
     </script>
 </body>
 </html>
