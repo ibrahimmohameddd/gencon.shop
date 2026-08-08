@@ -36,7 +36,7 @@
 
         $conn = new mysqli($host, $user, $pass, $db);
         
-        // $conn = new mysqli('sql304.infinityfree.com','if0_39979054','Barhoma2008','if0_39979054_gencon');
+//        $conn = new mysqli('sql304.infinityfree.com','if0_39979054','Barhoma2008','if0_39979054_gencon');
        
         $r = mysqli_query($conn, "SELECT * FROM category");
         
@@ -50,6 +50,7 @@
         if (isset($_POST['add'])) {
             $name = $_POST['name'];
             $description = $_POST['desc'];
+            $status_value = $_POST['status']; // Get status value
 
             // Handle file upload
             if (isset($_FILES['pic']) && $_FILES['pic']['error'] === 0) {
@@ -64,13 +65,13 @@
                     // Save only the path in DB
                     $pic = $targetPath;
 
-                    $sql = "INSERT INTO category (name, description, pic) 
-                            VALUES ('$name', '$description', '$pic')";
+                    $sql = "INSERT INTO category (name, description, pic, status) 
+                            VALUES ('$name', '$description', '$pic', '$status_value')";
 
                     if ($conn->query($sql) === TRUE) {
                         $status = "Category added successfully!";
                         $color = "green";
-                        header("Location: category-admin.php");
+                        header("Location: mang-categories.php");
                     } else {
                         $status =  "Error: " . $conn->error;
                         $color = "red";
@@ -89,6 +90,7 @@
             $id    = (int)$_POST['id'];
             $name  = $_POST['name'];
             $desc  = $_POST['description'];
+            $status_value = $_POST['status']; // Get status value
 
             // default: don't touch pic
             $picSql = "";
@@ -109,11 +111,11 @@
 
             // final query
             $sql = "UPDATE category 
-                    SET name='$name', description='$desc' $picSql
+                    SET name='$name', description='$desc', status='$status_value' $picSql
                     WHERE id=$id";
 
             if($conn->query($sql)===True){
-                header("Location: mang-categories.php");
+                header("Location: category-admin.php");
             }
             if (!$conn->query($sql)) {
                 die("Update failed: " . $conn->error);
@@ -157,6 +159,7 @@
             color: white;
             padding: 1rem 0;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
         
         .admin-logo {
@@ -196,8 +199,8 @@
         .btn-secondary {
             background: #6c757d;
             color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 3px;
+            padding: 0.5rem 0.75rem;
+            border-radius: 5px;
             border: none;
             cursor: pointer;
             font-size: 0.875rem;
@@ -206,11 +209,16 @@
         .btn-danger {
             background: #dc3545;
             color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 3px;
+            padding: 0.5rem 0.75rem;
+            border-radius: 5px;
             border: none;
             cursor: pointer;
             font-size: 0.875rem;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
         }
         
         .table th, .table td {
@@ -411,63 +419,182 @@
         #no-search-results i {
             color: #6c757d;
         }
-        .btn-info {
-            background: #17a2b8;
-            color: white;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 5px;
+        
+        /* Status Badge Styles */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-indoor {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-outdoor {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-sanitary {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* Radio Button Styles - Default */
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+        }
+        
+        .radio-option input[type="radio"] {
+            margin-right: 0.5rem;
+            width: auto;
+        }
+        
+        .radio-option label {
+            margin-bottom: 0;
             cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
         }
-        #admin-btn{
-            background-color: #2563eb;
-        }
-    #hamburger-btn{
-            border: 1px solid #eee;
-            border-radius: 5px;
-            font-size:1rem;
-            display:none;
-        }
-
-        #hamburger-list{
-            display:none;
-            flex-direction: column;
-            gap:12px;
-            position:absolute;
-            top:70px;
-            right:20px;
-            background-color:white;
-            border:1px solid #eee;
-            border-radius:5px;
-            padding:10px;
-            box-shadow:0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        #hamburger-list button{
-            width: 100% !important;
-        }
-
-        #hamburger-list.show{
-            display:flex !important;
-        }
-
+        
+        /* Mobile Responsiveness */
         @media (max-width: 768px) {
-            #hamburger-btn{
-                display:block;
+            .admin-header .container {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
             }
-            #options-container{
-                display:none;
+            
+            .admin-header .admin-options {
+                display: none;
+                position: absolute;
+                top: 100%;
+                right: 0;
+                width: 250px;
+                background: #1a1a1a;
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                z-index: 10;
+                border-radius: 0 0 8px 8px;
+            }
+            
+            .admin-header .admin-options.show {
+                display: flex;
+            }
+            
+            .admin-header .admin-options a,
+            .admin-header .admin-options button {
+                width: 100%;
+                text-align: center;
+                margin: 0.25rem 0;
+            }
+            
+            .admin-header .admin-options form {
+                width: 100%;
+            }
+            
+            .admin-header .admin-options form button {
+                width: 100%;
+            }
+            
+            .admin-header .hamburger {
+                display: block;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 0.5rem;
+            }
+            
+            .admin-header .welcome-message {
+                display: block;
+                font-size: 0.9rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 120px;
+                margin-right: 0.5rem;
+            }
+            
+            .admin-header .header-right {
+                display: flex;
+                align-items: center;
+            }
+            
+            .admin-header .header-left {
+                display: flex;
+                align-items: center;
+            }
+            
+            .admin-header .header-left .admin-logo {
+                margin-right: 0.5rem;
+            }
+            
+            .card {
+                padding: 1rem;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            .table {
+                min-width: 600px;
+            }
+            
+            .grid.grid-cols-1.md\\:grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .popup-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+            
+            .btn-secondary, .btn-danger {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.8rem;
+            }
+            
+            .flex.justify-between.items-center.mb-4 {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .flex.justify-between.items-center.mb-4 .relative {
+                width: 100%;
             }
         }
+        
         @media (min-width: 769px) {
-            #hamburger-list{
-                display: none !important;
+            .admin-header .hamburger {
+                display: none;
+            }
+            
+            .admin-header .welcome-message {
+                display: none;
+            }
+            
+            .admin-header .header-right {
+                display: flex;
+                align-items: center;
             }
         }
-
-</style>
+    </style>
     
    
 </head>
@@ -477,49 +604,38 @@
         <!-- Admin Header -->
         <header class="admin-header">
             <div class="container mx-auto px-6 flex justify-between items-center">
-                <div class="admin-logo">
-                    <span class="gen-part">GEN</span><span class="con-part">CON</span> Admin
+                <div class="header-left flex items-center">
+                    <div class="admin-logo">
+                        <span class="gen-part">GEN</span><span class="con-part">CON</span> Admin
+                    </div>
                 </div>
-                <div style="display:flex; align-items:center; gap:2rem;">
+                
+            <div class="header-right flex items-center">
+                    <div style="display:flex; align-items:center; gap:2rem;">
                     <span>Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Admin'; ?></span>
                     <span id="clock">00:00</span>
                 </div>
-                <div class="flex items-center space-x-4" id="options-container">
-                    
-                    <a href="admin-pannel.php">
-                    <button id="admin-btn" class="btn-info">
-                        <i class="fas fa-box mr-2"></i> Manage products
+                    <button class="hamburger" id="hamburger-btn">
+                        <i class="fas fa-bars"></i>
                     </button>
-                </a>
+                </div>
+                    
+                <div class="admin-options flex items-center space-x-4" id="admin-options">
+                    <a href="admin-pannel.php" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+                        <i class="fas fa-tachometer-alt mr-2"></i> Admin Panel
+                    </a>
                     <form method="POST">
                         <button id="logout-btn" name="logout" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">
                             <i class="fas fa-sign-out-alt mr-2"></i> Logout
                         </button>
                     </form>
                 </div>
-            <button id="hamburger-btn" class="px-4 py-2 rounded-lg transition" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+
                 
             </div>
+            
         </header>
-
-        <div id="hamburger-list">
-                <div style="display:flex; align-items:center; gap:2rem;">
-                    <span>Welcome, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Admin'; ?></span>
-                    <span id="hamburger-clock">00:00</span>
-                </div>
-            <a href="admin-pannel.php">
-                    <button id="admin-btn" class="btn-info">
-                        <i class="fas fa-box mr-2"></i> Manage products
-                    </button>
-                </a>
-                
-                    <form method="POST">
-                        <button id="logout-btn" name="logout" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition">
-                            <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                        </button>
-                    </form>
-        </div>
-
+        
         <!-- Main Content -->
         <main class="container mx-auto px-6 py-8">
             <h1 class="text-3xl font-bold mb-6">Category Management</h1>
@@ -559,6 +675,24 @@
                         <textarea name="desc" id="category-description" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" required></textarea>
                     </div>
                     
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-medium mb-2">Status</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="status-indoor" name="status" value="indoor" checked>
+                                <label for="status-indoor">Indoor</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="status-outdoor" name="status" value="outdoor">
+                                <label for="status-outdoor">Outdoor</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="status-sanitary" name="status" value="sanitary">
+                                <label for="status-sanitary">Sanitary</label>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <button name="add" type="submit" class="btn-primary">
                         <i class="fas fa-plus mr-2"></i> Add Category
                     </button>
@@ -578,13 +712,14 @@
                     </div>
                 </div>
                 
-                <div class="overflow-x-auto">
+                <div class="table-container">
                     <table class="table w-full">
                         <thead>
                             <tr>
                                 <th>Image</th>
                                 <th>Name</th>
                                 <th>Description</th>
+                                <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -599,6 +734,7 @@
                                     // remove newlines from description so it won't break an attribute
                                     $desc  = htmlspecialchars(str_replace(["\r", "\n"], [' ', ' '], $row['description'] ?? ''), ENT_QUOTES);
                                     $pic   = htmlspecialchars($row['pic'] ?? '', ENT_QUOTES);
+                                    $status_value = htmlspecialchars($row['status'] ?? 'indoor', ENT_QUOTES);
                             ?>
                             <tr>
                                 <td>
@@ -609,6 +745,11 @@
                               <td><?= $name ?></td>
                               <td><?= $desc ?></td>
                               <td>
+                                <span class="status-badge status-<?= $status_value ?>">
+                                    <?= ucfirst($status_value) ?>
+                                </span>
+                              </td>
+                              <td>
                                 <!-- Edit button: JS will read these data- attributes to fill the popup form -->
                                 <button
                                   class="editBtn btn-secondary mr-2"
@@ -616,6 +757,7 @@
                                   data-name="<?= $name ?>"
                                   data-desc="<?= $desc ?>"
                                   data-pic="<?= $pic ?>"
+                                  data-status="<?= $status_value ?>"
                                 >Edit</button>
 
                                 <!-- Delete button -->
@@ -625,25 +767,25 @@
                             <?php endwhile; 
                             } else {
                                 // If no categories found, show the message
-                                echo '<tr><td colspan="4" class="text-center py-4">No categories found</td></tr>';
+                                echo '<tr><td colspan="5" class="text-center py-4">No categories found</td></tr>';
                             }
                             ?>
                         </tbody>
                     </table>
-                    
-                    <!-- No categories message (when database is empty) -->
-                    <div id="no-categories" class="message-container">
-                        <i class="fas fa-folder-open text-4xl mb-2"></i>
-                        <h3 class="text-xl font-medium">No categories found</h3>
-                        <p>Add your first category to get started</p>
-                    </div>
-                    
-                    <!-- No search results message (when search returns no results) -->
-                    <div id="no-search-results" class="message-container">
-                        <i class="fas fa-search text-4xl mb-2"></i>
-                        <h3 class="text-xl font-medium">No matching categories found</h3>
-                        <p>Try a different search term</p>
-                    </div>
+                </div>
+                
+                <!-- No categories message (when database is empty) -->
+                <div id="no-categories" class="message-container">
+                    <i class="fas fa-folder-open text-4xl mb-2"></i>
+                    <h3 class="text-xl font-medium">No categories found</h3>
+                    <p>Add your first category to get started</p>
+                </div>
+                
+                <!-- No search results message (when search returns no results) -->
+                <div id="no-search-results" class="message-container">
+                    <i class="fas fa-search text-4xl mb-2"></i>
+                    <h3 class="text-xl font-medium">No matching categories found</h3>
+                    <p>Try a different search term</p>
                 </div>
             </div>
         </main>
@@ -664,6 +806,23 @@
                     <div class="form-group">
                         <label for="edit-category-description">Description</label>
                         <textarea name="description" id="editDesc" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="edit-status-indoor" name="status" value="indoor">
+                                <label for="edit-status-indoor">Indoor</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="edit-status-outdoor" name="status" value="outdoor">
+                                <label for="edit-status-outdoor">Outdoor</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="edit-status-sanitary" name="status" value="sanitary">
+                                <label for="edit-status-sanitary">Sanitary</label>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Current Image</label>
@@ -698,6 +857,21 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // Hamburger menu functionality
+            const hamburgerBtn = document.getElementById("hamburger-btn");
+            const adminOptions = document.getElementById("admin-options");
+            
+            hamburgerBtn.addEventListener("click", function() {
+                adminOptions.classList.toggle("show");
+            });
+            
+            // Close admin options when clicking outside
+            document.addEventListener("click", function(event) {
+                if (!hamburgerBtn.contains(event.target) && !adminOptions.contains(event.target)) {
+                    adminOptions.classList.remove("show");
+                }
+            });
+            
             // Show/hide no categories message based on table content
             const categoriesTable = document.getElementById("categories-table");
             const noCategoriesMessage = document.getElementById("no-categories");
@@ -778,6 +952,9 @@
             const editName = document.getElementById("editName");
             const editDesc = document.getElementById("editDesc");
             const currentCategoryImage = document.getElementById("current-category-image");
+            const editStatusIndoor = document.getElementById("edit-status-indoor");
+            const editStatusOutdoor = document.getElementById("edit-status-outdoor");
+            const editStatusSanitary = document.getElementById("edit-status-sanitary");
 
             // When any Edit button is clicked
             document.querySelectorAll(".editBtn").forEach(btn => {
@@ -787,6 +964,15 @@
                     editName.value = btn.dataset.name;
                     // Fix: Set textarea value properly
                     editDesc.value = btn.dataset.desc;
+                    
+                    // Set status radio buttons
+                    if (btn.dataset.status === 'outdoor') {
+                        editStatusOutdoor.checked = true;
+                    } else if (btn.dataset.status === 'sanitary') {
+                        editStatusSanitary.checked = true;
+                    } else {
+                        editStatusIndoor.checked = true;
+                    }
                     
                     // Show current image
                     currentCategoryImage.src = btn.dataset.pic;
@@ -833,8 +1019,13 @@
                 let visibleRows = 0;
                 
                 rows.forEach(row => {
-                    const text = row.textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
+                    // Get the text content of each cell for more targeted search
+                    const nameCell = row.cells[1] ? row.cells[1].textContent.toLowerCase() : '';
+                    const descCell = row.cells[2] ? row.cells[2].textContent.toLowerCase() : '';
+                    const statusCell = row.cells[3] ? row.cells[3].textContent.toLowerCase() : '';
+                    
+                    // Check if search term matches name, description, or status
+                    if (nameCell.includes(searchTerm) || descCell.includes(searchTerm) || statusCell.includes(searchTerm)) {
                         row.style.display = "";
                         visibleRows++;
                     } else {
@@ -864,7 +1055,8 @@
                 }
             });
         });
-   
+
+        
          function updateClock() {
             const now = new Date();
        
@@ -878,17 +1070,6 @@
         updateClock(); // Initial call
         setInterval(updateClock, 1000); // Update every second
 
-     const menu = document.getElementById("hamburger-list");
-        function toggleMenu() {
-             menu.classList.toggle("show");
-        }
-
-        window.addEventListener("resize", function() {
-            if (window.innerWidth > 796) {
-                menu.classList.remove("show");
-            }
-        });
-
-   </script>
+    </script>
 </body>
 </html>
